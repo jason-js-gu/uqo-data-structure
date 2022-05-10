@@ -83,3 +83,5 @@ print(tri_selection(a))
 ## initialisation
 ## conservation
 ## terminaison
+
+#
