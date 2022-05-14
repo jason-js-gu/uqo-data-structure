@@ -21,8 +21,8 @@ class Pile:
     def depiler(self):
         if self._top == -1:
             raise ValueError("Ne peut depiler car la pile est vide")
-        X = self._P[self._top]
         self._top -= -1
+        X = self._P[self._top]
         return X
 
     def afficher(self):
@@ -42,3 +42,17 @@ P.emplier(3)
 P.afficher()
 P.depiler()
 P.afficher()
+P.emplier(P,8)
+P.afficher()
+
+#222-223)/203
+
+""" • Exercice 10.3.1 (page 227/207) seulement la rep
+résentation par tableaux multiples.
+• Exercice 10.3.4/207 (déIi !) à implémenter en Python.
+• Implémente la fonction (permutation)
+de Josephus (page 311 de la version française du livre de référence). """
+
+
+
+
