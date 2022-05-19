@@ -1,17 +1,17 @@
-def quick_sort(arr): 
-    less,equal,greater=[],[],[]
-    if len(arr)>1:
-        pivot=arr[0]        
-        for i in arr:
+def tri_rapide(L=[4,2,1,8,7,5,3,6]): 
+    plusPetits,equals,plusGrands=[],[],[]
+    if len(L)>1:
+        pivot=L[-1]        
+        for i in L:
             if i<pivot:
-                less.append(i)
+                plusPetits.append(i)
             elif i==pivot:
-                equal.append(i)
+                equals.append(i)
             else:
-                greater.append(i)
-        return quick_sort(less)+equal+quick_sort(greater)
-    return arr
+                plusGrands.append(i)
+        return tri_rapide(plusPetits) + equals + tri_rapide(plusGrands)
+    return L
 
-ar=[12,4,5,6,7,3,1,15]
-
-print(quick_sort(ar))
+# tester
+print(tri_rapide())    # [1, 2, 3, 4, 5, 6, 7, 8]
+print(tri_rapide([2,1,1,6,4,2]))  # [1, 1, 2, 2, 4, 6]
