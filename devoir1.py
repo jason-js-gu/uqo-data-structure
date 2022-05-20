@@ -23,10 +23,10 @@ class Tas_d_aire:
     """
     def enfants(self, i):
         # deux enfants
-        if 2*i + 1 <= len(self.A)-1 and 2*i + 2 <= len(self.A)-1:
+        if 2*i + 1 <= self.d and 2*i + 2 <= self.d:
             return [self.A[2*i+1], self.A[2*i+2]]
         # seulement un enfant gauche
-        elif 2*i + 1 <= len(self.A)-1:
+        elif 2*i + 1 <= self.d:
             return [self.A[2*i+1]]
         # si le noeud est une feuille, il n'y a pas d'enfant
         return []
