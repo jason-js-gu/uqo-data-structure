@@ -32,7 +32,16 @@ class Tas_d_aire:
         return []
 
     def entasser_max(self, i):
-        pass
+        iMax = i
+        filsG_idx = 2*i + 1
+        filsD_idx = 2*i + 2
+        if filsG_idx < self.d and self.A[filsG_idx] > self.A[iMax]:
+            iMax = filsG_idx
+        if filsD_idx < self.d and self.A[filsD_idx] > self.A[iMax]:
+            iMax = filsD_idx
+        if iMax != i:
+            self.A[i], self.A[iMax] = self.A[iMax], self.A[i]
+            entasser_max(self, iMax)
 
     def extraire_max(self, i):
         pass
