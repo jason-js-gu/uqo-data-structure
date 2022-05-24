@@ -72,7 +72,8 @@ class Tas_d_aire:
         len_A = len(self.A)
         if len_A > 0:            
             max = self.A[0]
-            self.A[0] = self.A[len_A - 1]        
+            self.A[0] = self.A[len_A - 1] 
+            self.affiche()      
             self.A.remove(self.A[len_A - 1])       
             self.entasser_max(0)
             print('here')
