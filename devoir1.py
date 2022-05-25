@@ -73,11 +73,8 @@ class Tas_d_aire:
         if len_A > 0:            
             max = self.A[0]
             self.A[0] = self.A[len_A - 1] 
-            self.affiche()      
             self.A.remove(self.A[len_A - 1])       
             self.entasser_max(0)
-            print('here')
-            self.affiche()
             return max, self
 
     def inserer_max(self, k):
@@ -116,7 +113,15 @@ print('parent0:',tas1.parent(0))
 print('enfants:',tas1.enfants(0))
 
 tas1.affiche()
+tab2 = [1, 9, 4, 5, 7, 1, 2, 1,1,12]
 
+tas2 = Tas_d_aire(tab2, 2)
+tas2.A.remove(12)
+print('t2-a:',tas2.A)
+tas2.entasser_max(0)
+print('t2-b:',tas2.A)
+print('tas2:')
+tas2.affiche()
 
 ma, t2 = tas1.extraire_max()
 print('ma:',ma)

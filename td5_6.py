@@ -19,20 +19,20 @@ donc entier partie de lglen_n = h
 # 6.2.1 page 125
 A=[27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0]
 
-def max_heap(A, i):
-    imax = i
-    l = 2*i
-    r = 2*i + 1
-    if l < len(A) and r < len(A) and A[l] > A[i] and A[l] >= A[r]:
-        A[l], A[i] = A[i], A[l]
-        imax = l
-    elif r < len(A) and A[r] > A[i] and A[r] >= A[l]:
-        A[r], A[i] = A[i], A[r]
-        imax = r
+# def max_heap(A, i):
+#     imax = i
+#     l = 2*i
+#     r = 2*i + 1
+#     if l < len(A) and r < len(A) and A[l] > A[i] and A[l] >= A[r]:
+#         A[l], A[i] = A[i], A[l]
+#         imax = l
+#     elif r < len(A) and A[r] > A[i] and A[r] >= A[l]:
+#         A[r], A[i] = A[i], A[r]
+#         imax = r
 
-    max_heap(A, imax)
+#     max_heap(A, imax)
 
-max_heap(A, 3)
+# max_heap(A, 3)
 
 
 """
@@ -41,4 +41,11 @@ n = N_g + N_d
 
 """
 
+
+# hachage
+
+arr = [5,28,19,15,20,33,12,17,10]
+
+
+# h(k) = (h1(k)+ih2(k))mod249
 
