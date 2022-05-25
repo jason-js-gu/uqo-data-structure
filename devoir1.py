@@ -1,7 +1,6 @@
 # exercice #1
 
-from heapq import heapify
-import math
+from django.forms import ValidationError
 
 
 class Tas_d_aire:
@@ -12,15 +11,30 @@ class Tas_d_aire:
     d -> un entier positif, nombre des enfants d'un noeud qui n'est pas une feuille
     """
     def __init__(self, A, d):
-        self.A = A
-        self.d = d 
+        self.A = self.tab_validateur(A)
+        self.d = self.nbre_validateur(d)         
         # construire un tas max d-aire
         self.contruire_tas_max()
 
     """
+    Vérifier si la taille du tableau qui représente le tas est vide ou non
+    """
+    def tab_validateur(self, A):
+        if len(A) == 0:
+            raise ValidationError('Le tableau ne doit pas être vide')
+        return A
+
+    """
+    Vérifier si le nombre de d-aire est un entier au moins égale à 2 ou non
+    """
+    def nbre_validateur(self, d):
+        if isinstance(d, int) and d >= 2:
+            return d
+        raise ValidationError('D doit être un entier au moins égale à 2')
+    
+    """
     méthode pour trouver le parent d'un noeud
     params: i -> l'indice d'un noeud dans le tableau, qui commence de 0
-
     l'index de parent k, ses enfants sont: self.d*k + c ( 1<=c<=self.d)
     l'index de fils i = self.d*k + c, k = i-c/self.d
     k >= i-1//self.d >= i-self.d//self.d
@@ -43,10 +57,13 @@ class Tas_d_aire:
         return tuple(enfants)
 
 
+    """
+    
+    """
     def entasser_max(self, i):
-        enfants = list(self.enfants(i))
+        enfants = self.enfants(i)
         # print('r-enfants:',enfants)
-        if enfants != []:            
+        if enfants != ():            
             iMax = i            
             elements_enfant = [self.A[j] for j in enfants]
             fils_max = max(elements_enfant) 
@@ -72,19 +89,22 @@ class Tas_d_aire:
         len_A = len(self.A)
         if len_A > 0:            
             max = self.A[0]
-            self.A[0] = self.A[len_A - 1] 
-            self.affiche()      
-            self.A.remove(self.A[len_A - 1])       
+            self.A[0] = self.A[-1]                
+            del self.A[-1]                 
             self.entasser_max(0)
-            print('here')
-            self.affiche()
             return max, self
 
+    """
+    
+    """
     def inserer_max(self, k):
         self.A.append(float('-inf'))
         self.augmenter_cle(len(self.A)-1, k)
         return self
 
+    """
+    
+    """
     def augmenter_cle(self, i, k):
         if k >= self.A[i]:
             self.A[i] = k
@@ -92,8 +112,14 @@ class Tas_d_aire:
                 self.A[i], self.A[self.parent(i)] = self.A[self.parent(i)], self.A[i]
                 i = self.parent(i)
 
+    """
+    
+    """
     def affiche(self):
-        print(self.A)
+        print('Le tas max %d-aire:'% self.d, self.A)        
+        print('Noeud -> Enfants')
+        for i in range(len(self.A)):
+            print('  (%d) -> %s' % (i, str(self.enfants(i))))
 
 
 """
@@ -111,16 +137,21 @@ donc k égale à la partie entier de log(n, self.d)+1
 
 
 tab = [9, 1, 4, 12, 7, 1, 2, 1, 5]
-tas1 = Tas_d_aire(tab, 2)
+tas1 = Tas_d_aire(tab, 3)
+# tas4 = Tas_d_aire(tab,1)
+# tas5 = Tas_d_aire(tab,2.5)
+# tas6 = Tas_d_aire([],2)
+# tas7 = Tas_d_aire(tab, 'a')
+
 print('parent0:',tas1.parent(0))
 print('enfants:',tas1.enfants(0))
 
 tas1.affiche()
 
 
-ma, t2 = tas1.extraire_max()
-print('ma:',ma)
-t2.affiche()
+# ma, t2 = tas1.extraire_max()
+# print('ma:',ma)
+# t2.affiche()
 
 # t3 = t2.inserer_max(12)
 # t3.affiche()
