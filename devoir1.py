@@ -11,17 +11,27 @@ class Tas_d_aire:
     d -> un entier positif, nombre des enfants d'un noeud qui n'est pas une feuille
     """
     def __init__(self, A, d):
-        self.A = self.tab_validateur(A)
-        self.d = self.nbre_validateur(d)         
-        # construire un tas max d-aire
-        self.contruire_tas_max()
+        try:
+            self.A = self.tab_validateur(A)
+            self.d = self.nbre_validateur(d) 
+
+            # construire un tas max d-aire
+            self.contruire_tas_max()
+
+        except ValidationError:
+            print('Le tableau ne doit pas être vide') 
+
+        except ValueError:
+            print('D doit être un entier au moins égale à 2')       
+        
+        
 
     """
     Vérifier si la taille du tableau qui représente le tas est vide ou non
     """
     def tab_validateur(self, A):
         if len(A) == 0:
-            raise ValidationError('Le tableau ne doit pas être vide')
+            raise ValidationError('')
         return A
 
     """
@@ -30,7 +40,7 @@ class Tas_d_aire:
     def nbre_validateur(self, d):
         if isinstance(d, int) and d >= 2:
             return d
-        raise ValidationError('D doit être un entier au moins égale à 2')
+        raise ValueError('')
     
     """
     méthode pour trouver le parent d'un noeud
@@ -116,10 +126,15 @@ class Tas_d_aire:
     
     """
     def affiche(self):
-        print('Le tas max %d-aire:'% self.d, self.A)        
-        print('Noeud -> Enfants')
-        for i in range(len(self.A)):
-            print('  (%d) -> %s' % (i, str(self.enfants(i))))
+        try:
+            print('Le tas max %d-aire:'% self.d, self.A)        
+            print('Noeud -> Enfants')
+            for i in range(len(self.A)):
+                print('  (%d) -> %s' % (i, str(self.enfants(i))))
+        except BaseException:
+            print('Le tas est invalid')
+
+
 
 
 """
@@ -138,15 +153,16 @@ donc k égale à la partie entier de log(n, self.d)+1
 
 tab = [9, 1, 4, 12, 7, 1, 2, 1, 5]
 tas1 = Tas_d_aire(tab, 3)
-# tas4 = Tas_d_aire(tab,1)
-# tas5 = Tas_d_aire(tab,2.5)
-# tas6 = Tas_d_aire([],2)
-# tas7 = Tas_d_aire(tab, 'a')
+tas4 = Tas_d_aire(tab,1)
+tas5 = Tas_d_aire(tab,2.5)
+tas6 = Tas_d_aire([],2)
+tas7 = Tas_d_aire(tab, 'a')
 
 print('parent0:',tas1.parent(0))
 print('enfants:',tas1.enfants(0))
 
 tas1.affiche()
+tas4.affiche()
 
 
 # ma, t2 = tas1.extraire_max()
