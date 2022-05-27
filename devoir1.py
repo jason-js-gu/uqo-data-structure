@@ -135,7 +135,9 @@ class Tas_d_aire:
         return self
 
     """
-    
+    Vérifier si la clé à l'indice i est supérieure à son parent,
+    si c'est le cas, on augemente la clé à la place de son parent,
+    on repète cette procédure si la clé est toujours supérieure à son nouveau parent
     """
     def augmenter_cle(self, i, k):
         try:
