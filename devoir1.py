@@ -1,5 +1,7 @@
 # exercice #1
 
+from email import message
+from xml.dom import ValidationErr
 from django.forms import ValidationError
 
 
@@ -18,7 +20,7 @@ class Tas_d_aire:
             # construire un tas max d-aire
             self.contruire_tas_max()
 
-        except ValidationError:
+        except ValidationErr:
             print('Le tableau ne doit pas être vide') 
 
         except ValueError:
@@ -31,7 +33,7 @@ class Tas_d_aire:
     """
     def tab_validateur(self, A):
         if len(A) == 0:
-            raise ValidationError('')
+            raise ValidationErr('')
         return A
 
     """
@@ -96,7 +98,12 @@ class Tas_d_aire:
                 self.entasser_max(iMax)
 
     """
-    Construire un tas max
+    Construire un tas max.
+    L'indice du dernier noeud qui n'est pas une feuille : (len(self.A)-1)//self.d
+    ou on peut la trouver avec la fonction suivante:
+    for i in range(len(self.A)):
+        if self.enfants(i) == []:
+            return i-1
     """
     def contruire_tas_max(self):
         for i in range((len(self.A)-1)//self.d, -1, -1):
@@ -131,11 +138,14 @@ class Tas_d_aire:
     
     """
     def augmenter_cle(self, i, k):
-        if k >= self.A[i]:
-            self.A[i] = k
-            while i > 0 and self.A[self.parent(i)] < self.A[i]:
-                self.A[i], self.A[self.parent(i)] = self.A[self.parent(i)], self.A[i]
-                i = self.parent(i)
+        try:
+            if k >= self.A[i]:
+                self.A[i] = k
+                while i > 0 and self.A[self.parent(i)] < self.A[i]:
+                    self.A[i], self.A[self.parent(i)] = self.A[self.parent(i)], self.A[i]
+                    i = self.parent(i)
+        except BaseException:
+            print('La clé doit être un nombre')
 
     """
     
@@ -180,9 +190,9 @@ tas1.affiche()
 tas4.affiche()
 
 
-# ma, t2 = tas1.extraire_max()
+ma, t2 = tas1.extraire_max()
 # print('ma:',ma)
 # t2.affiche()
 
-# t3 = t2.inserer_max(12)
-# t3.affiche()
+t3 = t2.inserer_max('A')
+t3.affiche()
