@@ -1,9 +1,6 @@
 # exercice #1
-
-from email import message
+import math
 from xml.dom import ValidationErr
-from django.forms import ValidationError
-
 
 class Tas_d_aire:
 
@@ -24,8 +21,10 @@ class Tas_d_aire:
             print('Le tableau ne doit pas être vide') 
 
         except ValueError:
-            print('D doit être un entier au moins égale à 2')       
-        
+            print('D doit être un entier au moins égale à 2') 
+
+        except TypeError:
+            print('D doit être un entier')
         
 
     """
@@ -40,9 +39,11 @@ class Tas_d_aire:
     Vérifier si le nombre de d-aire est un entier au moins égale à 2 ou non
     """
     def nbre_validateur(self, d):
-        if isinstance(d, int) and d >= 2:
-            return d
-        raise ValueError('')
+        if not isinstance(d, int):
+            raise TypeError('')
+        elif d < 2:
+            raise ValueError('')
+        return d
     
     """
     méthode pour trouver le parent d'un noeud
@@ -123,7 +124,7 @@ class Tas_d_aire:
             del self.A[-1]
             # recontruire le tas max à partir de la racine                 
             self.entasser_max(0)
-            return max, self
+            return max
 
     """
     Insérer une clé dans le tas, si le tas max n'est pas équilibré, on augmenter la clé 
@@ -150,51 +151,62 @@ class Tas_d_aire:
             print('La clé doit être un nombre')
 
     """
-    
+    Afficher le tableau qui représente le tas max et
+    tous les noeuds et leurs enfants
     """
     def affiche(self):
         try:
-            print('Le tas max %d-aire:'% self.d, self.A)        
+            print('Le tas max %d-aire:'% self.d, self.A, '\nSa hauteur est %d. ' % (math.ceil(math.log(len(self.A)*self.d-len(self.A)+1, self.d))-1))     
             print('Noeud -> Enfants')
             for i in range(len(self.A)):
                 print('  (%d) -> %s' % (i, str(self.enfants(i))))
         except BaseException:
             print('Le tas est invalid')
+        finally:
+            print()
+            print('***********************************')
+            print()
 
 
 
 
-"""
-Question b : la hauteur d'un d-aire tas qui a n éléments
-k >= 1
-h = k, n(k)_min=self.d**(k-1)+1, n(k)_max=self.d**k
-
-self.d**(k-1)+1 <= n <= self.d**k
-k-1 < math.log(n, self.d) <= k
-
-k < log(n, self.d) + 1 && k >= log(n, self.d)
-donc k égale à la partie entier de log(n, self.d)+1
-
-"""
 
 
+# tests
 tab = [9, 1, 4, 12, 7, 1, 2, 1, 5]
-tas1 = Tas_d_aire(tab, 3)
+
+# tas invalids
 tas4 = Tas_d_aire(tab,1)
 tas5 = Tas_d_aire(tab,2.5)
 tas6 = Tas_d_aire([],2)
 tas7 = Tas_d_aire(tab, 'a')
 
-print('parent0:',tas1.parent(0))
-print('enfants:',tas1.enfants(0))
+# tas valids et leurs affichages
+d_aires = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+tas = [Tas_d_aire(tab, i) for i in d_aires]
+[i.affiche() for i in tas]
 
-tas1.affiche()
-tas4.affiche()
+# extraire max
+t = tas[0]
+print('Pour le %d-aire tas max' % t.d, t.A, ',') 
+max = t.extraire_max()
+print('sa valeur maximale est: %d' % max)   
+print('Après l\'enlève la valeur maximale, le nouveau tas max est: ', t.A)
+print()
+print('***********************************')
+print()
+
+# insérer une clé invalide
+arr=[2,4,6,2,1]
+t1 = Tas_d_aire(arr, 2)
+t1.affiche()
+# tttt1.inserer_max('a')
+print()
+print('***********************************')
+print()
+
+# insérer une clé valide
+ntab1 = t.inserer_max(15)
+ntab1.affiche()
 
 
-ma, t2 = tas1.extraire_max()
-# print('ma:',ma)
-# t2.affiche()
-
-t3 = t2.inserer_max('A')
-t3.affiche()
