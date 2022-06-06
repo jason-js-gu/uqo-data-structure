@@ -171,7 +171,6 @@ class Tas_d_aire:
 
 
 
-
 # tests
 tab = [9, 1, 4, 12, 7, 1, 2, 1, 5]
 
@@ -180,9 +179,12 @@ tas4 = Tas_d_aire(tab,1)
 tas5 = Tas_d_aire(tab,2.5)
 tas6 = Tas_d_aire([],2)
 tas7 = Tas_d_aire(tab, 'a')
+print()
+print('***********************************')
+print()
 
 # tas valids et leurs affichages
-d_aires = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+d_aires = [2, 3, 4, 5, 6, 7, 8, 9]
 tas = [Tas_d_aire(tab, i) for i in d_aires]
 [i.affiche() for i in tas]
 
@@ -196,17 +198,13 @@ print()
 print('***********************************')
 print()
 
+# insérer une clé valide
+t2 = tas[1]
+ntab1 = t2.inserer_max(15)
+ntab1.affiche()
+
 # insérer une clé invalide
-arr=[2,4,6,2,1]
-t1 = Tas_d_aire(arr, 2)
-t1.affiche()
-# tttt1.inserer_max('a')
+t2.inserer_max('a')
 print()
 print('***********************************')
 print()
-
-# insérer une clé valide
-ntab1 = t.inserer_max(15)
-ntab1.affiche()
-
-

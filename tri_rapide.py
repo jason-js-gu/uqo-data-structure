@@ -39,7 +39,7 @@ def tri_rapide_brute(L=[4,2,1,8,7,5,3,6]):
         return tri_rapide_brute(plusPetits) + equals + tri_rapide_brute(plusGrands)
     return L
 
-# tester
+# tests
 print(tri_rapide_brute())    # [1, 2, 3, 4, 5, 6, 7, 8]
 print(tri_rapide_brute([2,1,1,6,4,2]))  # [1, 1, 2, 2, 4, 6]
 print(tri_rapide_brute([]))  # []
