@@ -46,6 +46,7 @@ class RN_arbre:
 
 
     def trouve_noeud(self, i):
+        racine = Noeud(self.tab[0], 'Noir')
         if self.tab == [] or self.k == i:
             return self
         elif self.k > i:
@@ -55,11 +56,80 @@ class RN_arbre:
     
     def arbre_inserer(self, i):
         z = Noeud(i, 'Rouge')
+        y = Noeud()
         noeud_original = self.trouve_noeud(i)
-        if noeud_original:
-            noeud_original.k = i
-            noeud_original.c = z.c
-            self.inserer_correction_rn()
-        else:
-            pass
-            
+        if not noeud_original:
+            racine = self.trouve_noeud(self.tab[0])
+            while racine.k:
+                y = racine
+                if z.k < racine.k:
+                    racine = racine.g
+                else:
+                    racine = racine.d
+            z.p = y
+            if not y.k:
+                racine = z
+            elif z.k < y.k:
+                y.g = z
+            else:
+                y.right = z
+        self.inserer_correction_rn()
+
+
+    def supprimer(self, i):
+        z = Noeud(i, 'Rouge')
+        noeud_original = self.trouve_noeud(i)
+        if not noeud_original:
+           pass
+
+
+    def lire_range(self, i):
+        pass
+
+
+    def determine_rang(self, x):
+        pass
+
+
+    def minimum(self):
+        pass
+
+
+    def maximum(self):
+        pass
+
+
+    def ajout_pred_succ(self, x):
+        pass
+
+
+    def supprimer_pred_succ(self, z):
+        pass
+
+
+    def inserer_correction_rn(self):
+        pass 
+
+
+    def supprimer_correction_rn(self):
+        pass
+
+
+    def transplante_rn(self):
+        pass
+
+
+    def rotation_droite(self):
+        pass
+
+
+    def rotation_gauche(self):
+        pass
+
+
+    def arbre_minimum(self, x):
+        pass
+
+
+    def affiche(self):
+        pass
