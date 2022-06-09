@@ -12,19 +12,12 @@ class Noeud:
 
 
     def __str__(self):
-        return 'Noeud courant :\n\
-                -> Clé: %s\n\
-                -> Couleur: %s\n\
-                -> Parent: %d\n\
-                -> Enfant gauche: %d\n\
-                -> Enfant droite: %d\n\
-                -> Taille: %d\n\
-                -> Précédeur: %d\n\
-                -> Successeur: %d\n' % \
+        return '(%s%s g:%s d:%s t:%s)' % \
                 (
-                 self.k, self.c, self.p.k, 
-                 self.g.k, self.d.k, self.t,  
-                 self.pred.k, self.succ.k 
+                 self.k, '*' if self.c=='Rouge' else '',  
+                 self.g.k if self.g else 'Nil', 
+                 self.d.k if self.d else 'Nil', 
+                 self.t if self.t else 0
                 )
 
 class RN_arbre:
@@ -45,13 +38,17 @@ class RN_arbre:
         self._tab = val       
 
 
-    def trouve_noeud(self, i):
-        racine = Noeud(self.tab[0], 'Noir')
-        if self.tab == [] or self.k == i:
-            return self
-        elif self.k > i:
-            return self.trouve_noeud(self.g, i)
-        return self.trouve_noeud(self.d, i) 
+    def trouve_noeud(self, i):        
+        if len(self.tab) >= 1:
+            racine = Noeud(self.tab[0],'Noir')
+            if racine.k == i:
+                return racine
+            elif racine.k > i:
+                return self.trouve_noeud(racine.g, i)
+            return self.trouve_noeud(racine.d, i) 
+
+    def construire_RN_arbre():
+        pass
 
     
     def arbre_inserer(self, i):
@@ -133,3 +130,8 @@ class RN_arbre:
 
     def affiche(self):
         pass
+
+
+
+n = Noeud(1,'Noir')
+print(n)
