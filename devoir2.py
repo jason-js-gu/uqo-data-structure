@@ -14,7 +14,7 @@ class Noeud:
     def __str__(self):
         return '(%s%s g:%s d:%s t:%s)' % \
                 (
-                 self.k, '*' if self.c=='Rouge' else '',  
+                 self.k, '*' if self.c == 'Rouge' else '',  
                  self.g.k if self.g else 'Nil', 
                  self.d.k if self.d else 'Nil', 
                  self.t if self.t else 0
@@ -24,39 +24,48 @@ class RN_arbre:
 
     def __init__(self, tab):
         self.tab = tab
-
-        self.construire_RN_arbre()
+        self.nil = Noeud(None,'Noir')
+        self.racine = self.nil
+        self.min = self.minimum()
+        self.max = self.maximum()
+        self.RN_arbre()
     
     @property
     def tab(self):
         return self._tab
 
+
     @tab.setter
     def tab(self, val):
         if isinstance(any(val) != int):
-            raise ValueError
+            raise ValueError('Les éléments doivent être entiers')
         self._tab = val       
 
 
-    def trouve_noeud(self, i):        
+    def trouve_noeud(self, i): 
+        x = self.racine       
         if len(self.tab) >= 1:
-            racine = Noeud(self.tab[0],'Noir')
-            if racine.k == i:
-                return racine
-            elif racine.k > i:
-                return self.trouve_noeud(racine.g, i)
-            return self.trouve_noeud(racine.d, i) 
+            if x.k == i:
+                return x
+            elif self.racine.k > i:
+                return self.trouve_noeud(self.racine.g, i)
+            return self.trouve_noeud(self.racine.d, i) 
 
-    def construire_RN_arbre():
-        pass
 
-    
+    def RN_arbre(self):
+        if len(self.tab) == 0:
+            return self.racine
+        for i in self.tab:
+            self.arbre_inserer(i)
+        return self
+
+
     def arbre_inserer(self, i):
         z = Noeud(i, 'Rouge')
-        y = Noeud()
-        noeud_original = self.trouve_noeud(i)
-        if not noeud_original:
-            racine = self.trouve_noeud(self.tab[0])
+        y = self.nil
+        _noeud = self.trouve_noeud(i)
+        if not _noeud:
+            racine = self.racine
             while racine.k:
                 y = racine
                 if z.k < racine.k:
@@ -65,18 +74,18 @@ class RN_arbre:
                     racine = racine.d
             z.p = y
             if not y.k:
-                racine = z
+                self.racine = z
             elif z.k < y.k:
                 y.g = z
             else:
-                y.right = z
+                y.d = z
         self.inserer_correction_rn()
 
 
     def supprimer(self, i):
         z = Noeud(i, 'Rouge')
-        noeud_original = self.trouve_noeud(i)
-        if not noeud_original:
+        _noeud = self.trouve_noeud(i)
+        if not _noeud:
            pass
 
 
@@ -89,7 +98,9 @@ class RN_arbre:
 
 
     def minimum(self):
-        pass
+        while self.racine != self.nil:
+            if self.racine.d:
+                self.racine = 
 
 
     def maximum(self):
@@ -133,5 +144,5 @@ class RN_arbre:
 
 
 
-n = Noeud(1,'Noir')
+n = Noeud()
 print(n)
