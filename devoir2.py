@@ -225,7 +225,8 @@ class RN_arbre:
                 if w.c == R:
                     w.c = N
                     x.p.c = R
-                    self.
+                    self.rotation_gauche(x.p)
+                    w = x.p.g
 
 
 
