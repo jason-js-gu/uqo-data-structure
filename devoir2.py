@@ -133,10 +133,12 @@ class RN_arbre:
 
 
     def determine_rang(self, x):
-        z = self.trouve_noeud(x)
-        if z:
-            r = z.g.t + 1
-            y = z
+        if isinstance(x, int):
+            x = self.trouve_noeud(x)
+
+        if x:
+            r = x.g.t + 1
+            y = x
             while y != self.racine:
                 if y == y.p.d:
                     r = r + y.p.g.t + 1
@@ -255,6 +257,7 @@ class RN_arbre:
             x.p.d = y
         y.g = x
         x.p = y
+        # x.t, y.t
 
 
     def rotation_droite(self, x):
