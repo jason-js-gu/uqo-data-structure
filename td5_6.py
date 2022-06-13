@@ -12,7 +12,7 @@ donc len_n_min <= len_n <= len_n_max
 2**h <= len_n <= 2**(h+1)-1<2**(h+1)
 h <= lglen_n < h+1
 donc entier partie de lglen_n = h
-
+https://ita.skanev.com/14/02/01.html
 1+x+x**2+...+x**n=(x**(n+1) -1)/(x-1)
 """
 

@@ -26,13 +26,17 @@ N = 'Noir'
 
 class RN_arbre:
 
-    nil = Noeud(None, N)     
+    nil = Noeud(None, N)
+    nil.p = nil
+    nil.g = nil
+    nil.d = nil
+    nil.t = 0     
 
     def __init__(self, tab):
         self.tab = tab        
         self.racine = self.nil
-        self.min = self.minimum()
-        self.max = self.maximum()
+        self.min = self.nil
+        self.max = self.nil
         self.contruire_RN_arbre()
     
     @property
@@ -42,14 +46,14 @@ class RN_arbre:
 
     @tab.setter
     def tab(self, val):
-        if isinstance(any(val) != int):
+        if not isinstance(any(val), int):
             raise ValueError('Les éléments doivent être entiers')
         self._tab = val       
 
 
     def trouve_noeud(self, i): 
         x = self.racine       
-        if x == self.nil or i == x.k:
+        if x == self.nil or x.k == i:
             return x
         if x.k > i:
             return self.trouve_noeud(x.g, i)
@@ -65,58 +69,80 @@ class RN_arbre:
 
 
     def arbre_inserer(self, i):
-        z = Noeud(i, R)
-        y = self.nil        
-        _noeud = self.trouve_noeud(i)
-        if not _noeud:
-            x = self.racine
-            while x != self.nil:
-                y = x
-                if z.k < x.k:
-                    x = x.g
-                else:
-                    x = x.d
-            z.p = y
-            if y == self.nil:
-                self.racine = z
-            elif z.k < y.k:
-                y.g = z
-            else:
-                y.d = z
+        if isinstance(i, int):
+            z = Noeud(i, R)
+            z.t = 1
+        elif isinstance(i, Noeud):
+            z = i
+        
+        z.p = self.nil
         z.g = self.nil
         z.d = self.nil
-        z.c = R
-        self.inserer_correction_rn()
+        z.t = 1
+
+        y = self.nil
+        x = self.racine
+        while x != self.nil:
+            # mettre à jour la taille de chaque noeud x du chemin reliant la racine aux feuilles
+            x.t += 1
+            y = x 
+            if z.k < x.k:
+                x = x.g
+            else:
+                x = x.d
+        z.p = y
+        if y == self.nil:
+            self.racine = z
+        elif z.k < y.k:
+            y.g = z
+        else:
+            y.d = z
+        
         self.ajout_pred_succ(z)
-        self.determine_rang(z)
+        self.minimum(z)
+        self.maximum(z)
+        self.inserer_correction_rn(z)        
+        
         print('Après inserer_correction\n')
         self.affiche()
 
 
     def supprimer(self, i):
-        z = Noeud(i, R)
+        def decrement_taille_chaine(x):
+            while x != self.nil:
+                x.t -= 1
+                x = x.parent
+
+        z = self.trouve_noeud(i)
         y = z
-        y_c_originale = y.c
-        _noeud = self.trouve_noeud(i)
-        if not _noeud:
-           if z.g == self.nil:
-               x = z.d
-               self.transplante_rn(z, z.d)
-           elif z.d == self.nil:
-               x = z.g
-               self.transplante_rn(z, z.g)
-           y = self.arbre_minimum(z.d)
-           y_c_originale = y.c
-           x = y.d
-           if y.p == z:
-               x.p = y
-           self.transplante_rn(y, y.d)
-           y.d = z.d
-           y.d.p = y
-           self.transplante_rn(z, y)
-           y.g = z.g
-           y.g.p = y
-           y.c = z.c
+        y_c_originale = y.c        
+        if z: 
+            if z.g == self.nil:
+                decrement_taille_chaine(z)
+                x = z.d
+                self.transplante_rn(z, z.d)
+            elif z.d == self.nil:
+                decrement_taille_chaine(z)
+                x = z.g
+                self.transplante_rn(z, z.g)
+            else:
+                y = self.arbre_minimum(z.d)
+                y_c_originale = y.c
+                x = y.d
+
+                decrement_taille_chaine(y)
+                if y.p == z:
+                    x.p = y
+                else:
+                    self.transplante_rn(y, y.d)
+                    y.d = z.d
+                    y.d.p = y
+                self.transplante_rn(z, y)
+                y.g = z.g
+                y.g.p = y
+                y.c = z.c
+
+                y.t = y.g.t + y.d.t + 1
         if y_c_originale == N:
             self.supprimer_correction_rn(x)
 
@@ -134,9 +160,10 @@ class RN_arbre:
 
     def determine_rang(self, x):
         if isinstance(x, int):
-            x = self.trouve_noeud(x)
-
-        if x:
+            z = self.trouve_noeud(x)
+        elif isinstance(x, Noeud):
+            z = x
+        if z:
             r = x.g.t + 1
             y = x
             while y != self.racine:
@@ -146,23 +173,28 @@ class RN_arbre:
             return r
         
 
-    def minimum(self):
-        x = self.racine
-        while x.g != self.nil:
-            x = x.g
-        return x 
+    def minimum(self, x):        
+        # if x.p == self.nil or (x == x.p.g and self.min == x.p):
+        #    return x
 
-
-    def maximum(self):
-        x = self.racine
-        while x.d != self.nil:
-            x = x.d
-        return x
-
+    def maximum(self, x):        
+        # if x.p == self.nil or (x == x.p.d and self.max == x.p):
+        #    return x
 
     def ajout_pred_succ(self, x):
-        
-        return x.succ, x.pred
+        y = x.p 
+        if x == y.g:
+            x.succ = y
+            x.pred = y.pred
+            x.succ.pred = x
+            if x.pred != self.nil:
+                x.pred.succ = x
+        else:
+            x.pred = y
+            x.succ = y.succ
+            x.pred.succ = x
+            if x.succ != self.nil:
+                x.succ.pred = x
 
 
     def supprimer_pred_succ(self, z):
@@ -198,6 +230,7 @@ class RN_arbre:
                 z.p.c = N
                 z.p.p.c = R                
                 self.rotation_droite(z.p.p) 
+        self.racine.c = N
 
 
     def supprimer_correction_rn(self, x):
@@ -257,7 +290,8 @@ class RN_arbre:
             x.p.d = y
         y.g = x
         x.p = y
-        # x.t, y.t
+        y.t = x.t
+        x.t = x.g.t + x.d.t + 1        
 
 
     def rotation_droite(self, x):
@@ -275,9 +309,16 @@ class RN_arbre:
             x.p.g = y
         y.d = x
         x.p = y
+        y.t = x.t
+        x.t = x.g.t + x.d.t + 1
 
+
+
+    # trouver la clé minimale dans un arbre enraciné de x
     def arbre_minimum(self, x):
-        pass
+        while x.g != self.nil:
+            x = x.g
+        return x
 
 
     def affiche(self, title=None):
@@ -293,5 +334,7 @@ class RN_arbre:
 
 
 
-n = Noeud()
-print(n)
+# n = RN_arbre([4, 7, 12, 15, 3, 5, 14, 18, 16, 17])
+# print(n)
+
+
