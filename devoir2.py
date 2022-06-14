@@ -15,8 +15,8 @@ class Noeud:
         return '(%s%s g:%s d:%s t:%s)' % \
                 (
                  self.k, '*' if self.c == R else '',  
-                 self.g.k if self.g else 'Nil', 
-                 self.d.k if self.d else 'Nil', 
+                 self.g.k if self.g.k else 'Nil', 
+                 self.d.k if self.d.k else 'Nil', 
                  self.t if self.t else 0
                 )
 
@@ -108,8 +108,8 @@ class RN_arbre:
         
         self.inserer_correction_rn(z)        
         
-        print('Après inserer_correction\n')
-        self.affiche()
+        
+        self.affiche('\nAprès inserer_correction')
 
 
     def supprimer(self, i):
@@ -187,19 +187,23 @@ class RN_arbre:
         
 
     def ajout_pred_succ(self, x):
-        y = x.p 
-        if x == y.g:
-            x.succ = y
-            x.pred = y.pred
-            x.succ.pred = x
-            if x.pred != self.nil:
-                x.pred.succ = x
+        y = x.p
+        if y == self.nil:
+            x.succ = self.nil
+            x.pred = self.nil
         else:
-            x.pred = y
-            x.succ = y.succ
-            x.pred.succ = x
-            if x.succ != self.nil:
+            if x == y.g:
+                x.succ = y
+                x.pred = y.pred
                 x.succ.pred = x
+                if x.pred != self.nil:
+                    x.pred.succ = x
+            else:
+                x.pred = y
+                x.succ = y.succ
+                x.pred.succ = x
+                if x.succ and x.succ != self.nil:
+                    x.succ.pred = x
 
 
     def supprimer_pred_succ(self, z):
@@ -231,12 +235,13 @@ class RN_arbre:
                     y.c = N
                     z.p.p.c = R
                     z = z.p.p
-                elif z == z.p.d:
-                    z = z.p                    
-                    self.rotation_gauche(z)
-                z.p.c = N
-                z.p.p.c = R                
-                self.rotation_droite(z.p.p) 
+                else:
+                    if z == z.p.g:
+                        z = z.p                    
+                        self.rotation_droite(z)
+                    z.p.c = N
+                    z.p.p.c = R                
+                    self.rotation_gauche(z.p.p) 
         self.racine.c = N
 
 
@@ -252,24 +257,40 @@ class RN_arbre:
                 if w.g.c == N and w.d.c == N:
                     w.c = R
                     x = x.p
-                elif w.d.c == N:
-                    w.g.c = N
-                    w.c = R
-                    self.rotation_droite(w)
-                    w = x.p.d
-                w.c = x.p.c
-                x.p.c = N
-                w.d.c = N
-                self.rotation_gauche(x.p)
-                x = self.racine
+                else:
+                    if w.d.c == N:
+                        w.g.c = N
+                        w.c = R
+                        self.rotation_droite(w)
+                        w = x.p.d
+                    w.c = x.p.c
+                    x.p.c = N
+                    w.d.c = N
+                    self.rotation_gauche(x.p)
+                    x = self.racine
             else:
                 w = x.p.g
                 if w.c == R:
                     w.c = N
                     x.p.c = R
-                    self.rotation_gauche(x.p)
+                    self.rotation_droite(x.p)
                     w = x.p.g
 
+                if w.d.c == N and w.g.c == N:
+                    w.c = R
+                    x = x.p
+                else:
+                    if w.g.c == N:
+                        w.d.c = N
+                        w.c = R
+                        self.rotation_gauche(w)
+                        w = x.p.g
+                    w.c = x.p.c
+                    x.p.c = N
+                    w.g.c = N
+                    self.rotation_droite(x.p)
+                    x = self.racine
+        x.c = N
 
 
     def transplante_rn(self, u, v):
@@ -283,7 +304,7 @@ class RN_arbre:
 
 
     def rotation_gauche(self, x):
-        print('rotation_gauche:%d' % x.k)
+        print('\nrotation_gauche:%d' % x.k)
         y = x.d
         x.d = y.g
         if y.g != self.nil:
@@ -302,7 +323,7 @@ class RN_arbre:
 
 
     def rotation_droite(self, x):
-        print('rotation_droite:%d' % x.k)
+        print('\nrotation_droite:%d' % x.k)
         y = x.g
         x.g = y.d
         if y.d != self.nil:
@@ -318,8 +339,6 @@ class RN_arbre:
         x.p = y
         y.t = x.t
         x.t = x.g.t + x.d.t + 1
-
-
 
     # trouver la clé minimale dans un arbre enraciné de x
     def arbre_minimum(self, x):
@@ -337,11 +356,10 @@ class RN_arbre:
         else:
             while x != self.nil:
                 print(x, end=' ')
+                
                 x = x.succ
 
 
 
-# n = RN_arbre([4, 7, 12, 15, 3, 5, 14, 18, 16, 17])
-# print(n)
-
+n = RN_arbre([4, 7, 12, 15, 3, 5, 14, 18, 16, 17])
 
