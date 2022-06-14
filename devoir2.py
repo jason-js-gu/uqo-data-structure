@@ -35,8 +35,8 @@ class RN_arbre:
     def __init__(self, tab):
         self.tab = tab        
         self.racine = self.nil
-        self.min = self.nil
-        self.max = self.nil
+        self.minimum = self.nil
+        self.maximum = self.nil
         self.contruire_RN_arbre()
     
     @property
@@ -71,7 +71,7 @@ class RN_arbre:
     def arbre_inserer(self, i):
         if isinstance(i, int):
             z = Noeud(i, R)
-            z.t = 1
+            
         elif isinstance(i, Noeud):
             z = i
         
@@ -93,14 +93,19 @@ class RN_arbre:
         z.p = y
         if y == self.nil:
             self.racine = z
+            self.minimum = z
+            self.maximum = z
         elif z.k < y.k:
             y.g = z
+            if self.minimum == z.p:
+                self.minimum = z
         else:
             y.d = z
+            if self.maximum == z.p:
+                self.maximum = z
         
         self.ajout_pred_succ(z)
-        self.minimum(z)
-        self.maximum(z)
+        
         self.inserer_correction_rn(z)        
         
         print('Après inserer_correction\n')
@@ -143,6 +148,14 @@ class RN_arbre:
                 y.c = z.c
 
                 y.t = y.g.t + y.d.t + 1
+
+        if self.minimum == z:
+            self.minimum = z.succ
+        if self.maximum == z:
+            self.maximum = z.pred
+
+        self.supprimer_pred_succ(z)  
+
         if y_c_originale == N:
             self.supprimer_correction_rn(x)
 
@@ -173,14 +186,6 @@ class RN_arbre:
             return r
         
 
-    def minimum(self, x):        
-        # if x.p == self.nil or (x == x.p.g and self.min == x.p):
-        #    return x
-
-    def maximum(self, x):        
-        # if x.p == self.nil or (x == x.p.d and self.max == x.p):
-        #    return x
-
     def ajout_pred_succ(self, x):
         y = x.p 
         if x == y.g:
@@ -198,8 +203,10 @@ class RN_arbre:
 
 
     def supprimer_pred_succ(self, z):
-        
-        return z.succ, z.pred
+        if z.pred:
+            z.pred.succ = z.succ
+        if z.succ:
+            z.succ.pred = z.pred        
 
 
     def inserer_correction_rn(self, z):
