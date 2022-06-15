@@ -53,19 +53,21 @@ class RN_arbre:
 
     def trouve_noeud(self, i): 
         x = self.racine       
-        if x == self.nil or x.k == i:
-            return x
-        if x.k > i:
-            return self.trouve_noeud(x.g, i)
-        return self.trouve_noeud(x.d, i) 
+        while x != self.nil:
+            if x.k == i:
+                return x
+            elif x.k > i:
+                x = x.g
+            else:
+                x = x.d
+        return None 
 
 
     def contruire_RN_arbre(self):
         if len(self.tab) == 0:
             return self.racine
         for i in self.tab:
-            self.arbre_inserer(i)
-        return self
+            self.arbre_inserer(i)            
 
 
     def arbre_inserer(self, i):
@@ -106,17 +108,14 @@ class RN_arbre:
         
         self.ajout_pred_succ(z)
         
-        self.inserer_correction_rn(z)        
-        
-        
+        self.inserer_correction_rn(z)         
         self.affiche('\nAprès inserer_correction')
-
 
     def supprimer(self, i):
         def decrement_taille_chaine(x):
             while x != self.nil:
                 x.t -= 1
-                x = x.parent
+                x = x.p
 
         z = self.trouve_noeud(i)
         y = z
@@ -162,13 +161,15 @@ class RN_arbre:
 
     def lire_rang(self, i):
         x = self.racine
-        if x != self.nil:
+        while x != self.nil:
             r = x.g.t + 1
             if i == r:
                 return x
-            elif i < x:
-                return self.lire_rang(x.g, i)
-            return self.lire_rang(x.d, i - r)
+            elif i < r:
+                x = x.g
+            else:
+                i -= r
+                x = x.d
 
 
     def determine_rang(self, x):
@@ -176,9 +177,10 @@ class RN_arbre:
             z = self.trouve_noeud(x)
         elif isinstance(x, Noeud):
             z = x
+        # print('z:',z)
         if z:
-            r = x.g.t + 1
-            y = x
+            r = z.g.t + 1
+            y = z
             while y != self.racine:
                 if y == y.p.d:
                     r = r + y.p.g.t + 1
@@ -243,7 +245,7 @@ class RN_arbre:
                     z.p.p.c = R                
                     self.rotation_gauche(z.p.p) 
         self.racine.c = N
-
+        
 
     def supprimer_correction_rn(self, x):
         while x != self.racine and x.c == N:
@@ -348,18 +350,17 @@ class RN_arbre:
 
 
     def affiche(self, title=None):
-        x = self.racine
+        x = self.minimum        
         if title:
             print(title)
-        if x == self.nil:
-            print(x)
-        else:
-            while x != self.nil:
-                print(x, end=' ')
-                
-                x = x.succ
-
+        while x != self.nil:
+            print(x, end=' ')                
+            x = x.succ
 
 
 n = RN_arbre([4, 7, 12, 15, 3, 5, 14, 18, 16, 17])
 
+
+
+n.supprimer(3)
+n.affiche("\naprès Suppression de 3")
