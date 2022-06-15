@@ -1,3 +1,4 @@
+# créer et initialiser la class Noeud
 class Noeud:
     def __init__(self, k=None, c=None, p=None, g=None, 
                 d=None, t=None, pred=None, succ=None):
@@ -10,7 +11,7 @@ class Noeud:
         self.pred = pred
         self.succ = succ
 
-
+    # l'affichage d'un noeud
     def __str__(self):
         return '(%s%s g:%s d:%s t:%s)' % \
                 (
@@ -25,7 +26,7 @@ R = 'Rouge'
 N = 'Noir'
 
 class RN_arbre:
-
+    # attribut de la class
     nil = Noeud(None, N)
     nil.p = nil
     nil.g = nil
@@ -35,22 +36,23 @@ class RN_arbre:
     def __init__(self, tab):
         self.tab = tab        
         self.racine = self.nil
-        self.minimum = self.nil
-        self.maximum = self.nil
-        self.contruire_RN_arbre()
+        self.min = self.nil
+        self.max = self.nil
+        self.construire_RN_arbre()
     
+    # validation de la propriété tab
     @property
     def tab(self):
         return self._tab
 
-
     @tab.setter
     def tab(self, val):
-        if not isinstance(any(val), int):
-            raise ValueError('Les éléments doivent être entiers')
+        for i in val:
+            if not isinstance(i, int):
+                raise ValueError('Les éléments doivent être entiers')
         self._tab = val       
 
-
+    # vérifier si un noeud dans l'arbre ou non à partir de sa clé
     def trouve_noeud(self, i): 
         x = self.racine       
         while x != self.nil:
@@ -62,21 +64,26 @@ class RN_arbre:
                 x = x.d
         return None 
 
-
-    def contruire_RN_arbre(self):
+    # créer un arbre rouge-noir 
+    def construire_RN_arbre(self):
         if len(self.tab) == 0:
             return self.racine
         for i in self.tab:
             self.arbre_inserer(i)            
 
-
+    """
+    insérer un noeud dans un arbre rouge-noir
+    params: i, soit un entier, soit un noeud
+    après l'insertion, tous les propriétés doivent être mis à jour
+    """
     def arbre_inserer(self, i):
+        # si le paramètre i est un entier, créer un nouveau noeud
         if isinstance(i, int):
             z = Noeud(i, R)
-            
+          
         elif isinstance(i, Noeud):
             z = i
-        
+        # initialiser les attributs du noeud à insérer
         z.p = self.nil
         z.g = self.nil
         z.d = self.nil
@@ -85,7 +92,7 @@ class RN_arbre:
         y = self.nil
         x = self.racine
         while x != self.nil:
-            # mettre à jour la taille de chaque noeud x du chemin reliant la racine aux feuilles
+            # mettre à jour la taille de chaque noeud x du chemin simple reliant la racine aux feuilles
             x.t += 1
             y = x 
             if z.k < x.k:
@@ -93,30 +100,40 @@ class RN_arbre:
             else:
                 x = x.d
         z.p = y
+        # mettre à jour les propriétés racine (s'il y a lieu), min et max d'instance 
         if y == self.nil:
             self.racine = z
-            self.minimum = z
-            self.maximum = z
+            self.min = z
+            self.max = z
         elif z.k < y.k:
             y.g = z
-            if self.minimum == z.p:
-                self.minimum = z
+            if self.min == z.p:
+                self.min = z
         else:
             y.d = z
-            if self.maximum == z.p:
-                self.maximum = z
-        
+            if self.max == z.p:
+                self.max = z
+        # mettre à jour les prédésseur et suucessuer du noeud inséré
         self.ajout_pred_succ(z)
-        
-        self.inserer_correction_rn(z)         
+        # réconstruire l'arbre pour corriger les conflits des règlements d'un arbre rouge-noir
+        self.inserer_correction_rn(z) 
+        # afficher l'arbre après la correction        
         self.affiche('\nAprès inserer_correction')
 
+    
+    """
+    supprimer un noeud s'il est dans l'arbre
+    params: i, un entier delaquelle on vérifie si ce noeud est dans l'arbre ou non
+    après la suppression, on doit mettre à jour les propriétés et réconstruire l'arbre
+    """
+    # 
     def supprimer(self, i):
+        # function imbriquée pour décrémenter la taille des ancêtres d'un noeud
         def decrement_taille_chaine(x):
             while x != self.nil:
                 x.t -= 1
                 x = x.p
-
+        # chercher le noeud à supprimer et le stocker dans la variable z
         z = self.trouve_noeud(i)
         y = z
         y_c_originale = y.c        
@@ -130,10 +147,10 @@ class RN_arbre:
                 x = z.g
                 self.transplante_rn(z, z.g)
             else:
-                y = self.arbre_minimum(z.d)
+                # le noeud à supprimer a deux enfants
+                y = self.arbre_min(z.d)
                 y_c_originale = y.c
                 x = y.d
-
                 decrement_taille_chaine(y)
                 if y.p == z:
                     x.p = y
@@ -145,22 +162,23 @@ class RN_arbre:
                 y.g = z.g
                 y.g.p = y
                 y.c = z.c
-
+                # mettre à jour la taille
                 y.t = y.g.t + y.d.t + 1
-
-        if self.minimum == z:
-            self.minimum = z.succ
-        if self.maximum == z:
-            self.maximum = z.pred
-
+        # mettre à jour le min et le max de l'arbre
+        if self.min == z:
+            self.min = z.succ
+        if self.max == z:
+            self.max = z.pred
+        # mettre à jour le précédeur et le successeur du noeud supprimé
         self.supprimer_pred_succ(z)  
-
+        # faire la correction si necéssaire
         if y_c_originale == N:
             self.supprimer_correction_rn(x)
 
-
+    # obtenir un noeud à partir d'un entier qui représente son rang
     def lire_rang(self, i):
         x = self.racine
+        # non récursif
         while x != self.nil:
             r = x.g.t + 1
             if i == r:
@@ -170,8 +188,11 @@ class RN_arbre:
             else:
                 i -= r
                 x = x.d
-
-
+    """
+    obtenir le rang d'un noeud
+    params: x, soit un entier qui représente la clé d'un noeud, soit un noeud
+    """
+    # 
     def determine_rang(self, x):
         if isinstance(x, int):
             z = self.trouve_noeud(x)
@@ -187,7 +208,7 @@ class RN_arbre:
                 y = y.p
             return r
         
-
+    # mettre à jour le précédeur et le successeur d'un noeud inséré
     def ajout_pred_succ(self, x):
         y = x.p
         if y == self.nil:
@@ -207,14 +228,14 @@ class RN_arbre:
                 if x.succ and x.succ != self.nil:
                     x.succ.pred = x
 
-
+    # mettre à jour le précédeur et le successeur d'un noeud supprimé
     def supprimer_pred_succ(self, z):
         if z.pred:
             z.pred.succ = z.succ
         if z.succ:
             z.succ.pred = z.pred        
 
-
+    # reconstruire l'arbre rouge-noir après l'insertion
     def inserer_correction_rn(self, z):
         while z.p.c == R:
             if z.p == z.p.p.g:
@@ -246,7 +267,7 @@ class RN_arbre:
                     self.rotation_gauche(z.p.p) 
         self.racine.c = N
         
-
+    # reconstruire l'arbre rouge-noir après la suppression
     def supprimer_correction_rn(self, x):
         while x != self.racine and x.c == N:
             if x == x.p.g:
@@ -294,7 +315,7 @@ class RN_arbre:
                     x = self.racine
         x.c = N
 
-
+    # transplater un sous arbre d'un noeud vers un autre
     def transplante_rn(self, u, v):
         if u.p == self.nil:
             self.racine = v
@@ -304,7 +325,7 @@ class RN_arbre:
             u.p.d = v
         v.p = u.p
 
-
+    # rotation gauche à partir d'un noeud
     def rotation_gauche(self, x):
         print('\nrotation_gauche:%d' % x.k)
         y = x.d
@@ -320,10 +341,11 @@ class RN_arbre:
             x.p.d = y
         y.g = x
         x.p = y
+        # mettre à jour la taille des noeuds affectés par la rotation
         y.t = x.t
         x.t = x.g.t + x.d.t + 1        
 
-
+    # rotation droite à partir d'un noeud
     def rotation_droite(self, x):
         print('\nrotation_droite:%d' % x.k)
         y = x.g
@@ -339,18 +361,19 @@ class RN_arbre:
             x.p.g = y
         y.d = x
         x.p = y
+        # mettre à jour la taille des noeuds affectés par la rotation
         y.t = x.t
         x.t = x.g.t + x.d.t + 1
 
     # trouver la clé minimale dans un arbre enraciné de x
-    def arbre_minimum(self, x):
+    def arbre_min(self, x):
         while x.g != self.nil:
             x = x.g
         return x
 
-
+    # afficher l'arbre en ordre croissant
     def affiche(self, title=None):
-        x = self.minimum        
+        x = self.min        
         if title:
             print(title)
         while x != self.nil:
@@ -362,5 +385,3 @@ n = RN_arbre([4, 7, 12, 15, 3, 5, 14, 18, 16, 17])
 
 
 
-n.supprimer(3)
-n.affiche("\naprès Suppression de 3")
